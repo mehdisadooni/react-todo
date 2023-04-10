@@ -23,7 +23,19 @@ const Todos = () => {
                     </div>
                 )}
                 {todos && todos.map(todo => (
-                    <h1 key={todo.id}>{todo.title}</h1>
+                    <div className='col-md-4' key={todo.id}>
+                        <div className={"card " + (!todo.completed &&  "bg-secondary")}>
+                            <div className="card-body d-flex justify-content-between align-items-center">
+                                <div>{todo.completed ? <del>{todo.title}</del> : <span>{todo.title}</span>}</div>
+                                <div className='d-flex align-items-end'>
+                                    {todo.completed ?
+                                            <i className='bi bi-check-all fs-4'></i> :
+                                            <i className='bi bi-check fs-4'></i>}
+                                    <i className='bi bi-trash-fill fs-5'></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>
