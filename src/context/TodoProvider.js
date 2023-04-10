@@ -7,7 +7,8 @@ const TodoProvider = ({children}) => {
 
     const initialState = {
         todos: [],
-        error: null
+        error: null,
+        loading: true
     }
     const [state, dispatch] = useReducer(todoReducer, initialState)
 
@@ -23,7 +24,10 @@ const TodoProvider = ({children}) => {
                 type: 'SET_ERROR',
                 payload: null
             })
-            console.log('loop ...')
+            dispatch({
+                type: 'SET_LOADING',
+                payload: false
+            })
         } catch (error) {
             console.log(error.message)
             dispatch({
@@ -34,11 +38,52 @@ const TodoProvider = ({children}) => {
                 type: 'SET_TODOS',
                 payload: []
             })
+            dispatch({
+                type: 'SET_LOADING',
+                payload: false
+            })
         }
     }, [])
 
+
+    const filterTodos = async (value) => {
+        try {
+            dispatch({
+                type: 'SET_LOADING',
+                payload: true
+            })
+            const response = await axios.get(`https://jsonplaceholder.typicode.com/todos?_limit=${value}`)
+            dispatch({
+                type: 'FILTER_TODOS',
+                payload: response.data
+            })
+            dispatch({
+                type: 'SET_ERROR',
+                payload: null
+            })
+            dispatch({
+                type: 'SET_LOADING',
+                payload: false
+            })
+        } catch (error) {
+            console.log(error.message)
+            dispatch({
+                type: 'SET_ERROR',
+                payload: error.message
+            })
+            dispatch({
+                type: 'FILTER_TODOS',
+                payload: []
+            })
+            dispatch({
+                type: 'SET_LOADING',
+                payload: false
+            })
+        }
+    }
+
     return (
-        <TodoContext.Provider value={{...state, dispatch, getTodos}}>
+        <TodoContext.Provider value={{...state, dispatch, getTodos, filterTodos}}>
             {children}
         </TodoContext.Provider>
     )
