@@ -1,40 +1,33 @@
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import TodoContext from "../context/TodoContext";
-import axios from "axios";
 
 const Todos = () => {
-    const todoContext = useContext(TodoContext)
 
+    const {todos, error, getTodos} = useContext(TodoContext)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-
-        // fetch('https://jsonplaceholder.typicode.com/todos')
-        //     .then(res => res.json())
-        //     .then(data => {
-        //         todoContext.dispatch({type: 'SET_TODOS', payload: data})
-        //     });
-        //
-        // axios.get('https://jsonplaceholder.typicode.com/todos')
-        //     .then(response => {
-        //         todoContext.dispatch({type: 'SET_TODOS', payload: response.data})
-        //     }).catch(error => {
-        //     console.log(error)
-        // })
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('https://jsonplaceholder.typicode.com/todos')
-                console.log(response.data)
-            } catch (error) {
-                console.log(error.message)
-            }
-        }
-
-        fetchData()
-
-    }, [])
+        (async () => {
+            await getTodos()
+            setLoading(false)
+        })()
+    }, [getTodos])
 
     return (
-        <h2>Todos page</h2>
+        <div className='container mt-5'>
+            <div className='row'>
+                {error && <div className='alert alert-danger text-center'>{error}</div>}
+                {loading && (
+                    <div className='col-md-12 text-center'>
+                        <div className='spinner-border mt-5'></div>
+                    </div>
+                )}
+                {todos && todos.map(todo => (
+                    <h1 key={todo.id}>{todo.title}</h1>
+                ))}
+            </div>
+        </div>
+
     )
 }
 
